@@ -32,7 +32,7 @@ conda activate short-read-quality-control
 > All databases used in CAMP modules will also be available for download on Zenodo (link TBD).
 
 3. Download the appropriate host reference genome(s) and make a Bowtie2 index using `bowtie2-build /path/to/host_reference.fa /path/to/host_reference`, and add the prefix `/path/to/host_reference` to `parameters.yaml`.
-    - For example, I downloaded the latest major release of the human reference genome.
+    - For example, I downloaded the latest major release of the human reference genome. This is needed for the test run. 
 ```Bash
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/GCA_000001405.15_GRCh38_genomic.fna.gz
 bowtie2-build --threads 20 GCA_000001405.15_GRCh38_genomic.fna.gz GCA_000001405.15_GRCh38_genomic
