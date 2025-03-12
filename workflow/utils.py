@@ -11,6 +11,13 @@ from os import makedirs, symlink
 from os.path import abspath, exists, join
 import pandas as pd
 import shutil
+import yaml
+
+def get_conda_prefix(yaml_file):
+    """Load conda_prefix from parameters.yaml."""
+    with open(yaml_file, "r") as file:
+        config = yaml.safe_load(file)
+    return config.get("conda_prefix", "Not Found")  # Default value if key is missing
 
 
 def extract_from_gzip(ap, out):
