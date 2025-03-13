@@ -205,8 +205,7 @@ rule filter_seq_errors_tp:
     output:
         fwd = join(dirs.OUT, '3_error_removal', 'tadpole', '{sample}_1.fastq.gz'),
         rev = join(dirs.OUT, '3_error_removal', 'tadpole', '{sample}_2.fastq.gz'),
-    conda:
-        join(config['env_yamls'], 'bbmap.yaml'),
+    conda: "bbmap"  
     log:
         join(dirs.LOG, 'error_removal', '{sample}.out')
     threads: config['filter_seq_errors_threads'],
@@ -229,8 +228,8 @@ rule fastqc_pre:
         join(dirs.TMP,'{sample}_{dir}.fastq.gz'),
     output:
         join(dirs.OUT, '4_summary', 'fastqc_pre', '{sample}_{dir}_fastqc.html'),
-    conda:
-        join(config['env_yamls'], 'multiqc.yaml'),
+    conda: "multiqc"
+        #join(config['env_yamls'], 'multiqc.yaml'),	
     threads: config['qc_threads'],
     params:
         out_dir = join(dirs.OUT, '4_summary', 'fastqc_pre'),
@@ -247,8 +246,7 @@ rule fastqc_post:
         workflow_mode_err,
     output:
         join(dirs.OUT, '4_summary', 'fastqc_post', '{sample}_{dir}_fastqc.html'),
-    conda:
-        join(config['env_yamls'], 'multiqc.yaml'),
+    conda: "multiqc"
     threads: config['qc_threads'],
     params:
         out_dir = join(dirs.OUT, '4_summary', 'fastqc_post'),
@@ -265,8 +263,7 @@ rule multiqc:
         lambda wildcards: expand(join(dirs.OUT, '4_summary', 'fastqc_{eval}', '{sample}_{dir}_fastqc.html'), eval = wildcards.eval, sample = SAMPLES, dir = ['1', '2']),
     output:
         join(dirs.OUT, '4_summary', '{eval}_multiqc_report.html'),
-    conda:
-        join(config['env_yamls'], 'multiqc.yaml'),
+    conda: "multiqc"
     threads: config['qc_threads'],
     params:
         in_dir = join(dirs.OUT, '4_summary', 'fastqc_{eval}'),
