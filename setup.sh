@@ -48,7 +48,7 @@ download_and_index() {
     INSTALL_PATH=$5
 
     # Create a dedicated directory inside the provided install path
-    GENOME_DIR="$INSTALL_PATH/${INDEX_NAME}_ref_genome"
+    GENOME_DIR="$INSTALL_PATH"
     mkdir -p "$GENOME_DIR"
 
     echo "Downloading $GENOME_NAME reference genome to $GENOME_DIR..."
@@ -58,7 +58,7 @@ download_and_index() {
     gunzip "$GENOME_DIR/$FILE_NAME.gz" || { echo "❌ Failed to extract $GENOME_NAME."; return; }
 
     echo "Building Bowtie2 index in $GENOME_DIR..."
-    bowtie2-build "$GENOME_DIR/$FILE_NAME" "$GENOME_DIR/hg38_ref" || { echo "❌ Failed to build index for $GENOME_NAME."; return; }
+    bowtie2-build "$GENOME_DIR/$FILE_NAME" "$GENOME_DIR/hg38_index" || { echo "❌ Failed to build index for $GENOME_NAME."; return; }
 
     echo "✅ $GENOME_NAME genome downloaded and indexed successfully in $GENOME_DIR!"
 
