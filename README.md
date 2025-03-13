@@ -31,19 +31,25 @@ conda activate short-read-quality-control
 > [!TIP]
 > All databases used in CAMP modules will also be available for download on Zenodo (link TBD).
 
-3. Download the appropriate host reference genome(s) and make a Bowtie2 index using `bowtie2-build /path/to/host_reference.fa /path/to/host_reference`, and add the prefix `/path/to/host_reference` to `parameters.yaml`.
-    - For example, I downloaded the latest major release of the human reference genome.
+3. Automated setup by downloading and indexing host reference genome(s). In the `setup.sh` script, indexing is done using 20 threads. The user can modify this parameter based on the capacity of their machine.
+
+This step also automatically updates `configs/parameters.yaml` and `test_data/parameters.yaml`, which are needed in running the module and the test respectively. 
+
+```Bash
+source bash.sh
+```
+Alternatively, one can choose to manually download and index reference genomes and update the `host_reference_databas` section in the respective `parameters.yaml`. 
+For instance, the human reference genome (GRCh38) can be downloaded and indexed as follows:
 ```Bash
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/GCA_000001405.15_GRCh38_genomic.fna.gz
 bowtie2-build --threads 20 GCA_000001405.15_GRCh38_genomic.fna.gz GCA_000001405.15_GRCh38_genomic
 ```
+As of now, `setup.sh` provides two download options: human and mouse.
 
-4. Update the relevant parameters (if applicable- for example, location of external non-conda tools, your downloaded databases) in `test_data/parameters.yaml`.
-
-5. Make sure the installed pipeline works correctly. With 40 threads and a maximum of 150 GB allocated for a command (`tadpole`), the test dataset should finish in approximately 6 minutes.
+4. Make sure the installed pipeline works correctly. With 40 threads and a maximum of 150 GB allocated for a command (`tadpole`), the test dataset should finish in approximately 6 minutes.
 ```Bash
 # Run tests on the included sample dataset
-python /path/to/camp_short-read-quality-control/workflow/short-read-quality-control.py test
+python camp_short-read-quality-control/workflow/short-read-quality-control.py test
 ```
 
 ## Using the Module
