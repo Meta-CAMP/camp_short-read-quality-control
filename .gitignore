@@ -126,3 +126,12 @@ dmypy.json
 # Random 
 *.DS_Store
 *.idea
+
+# Testing
+.snakemake/
+test_out/
+short_read_qc.out
+
+# test_data
+test_data/samples.csv
+test_data/parameters.yaml

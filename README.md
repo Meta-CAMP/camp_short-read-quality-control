@@ -1,6 +1,6 @@
 # Short-Read Quality Control
 
-[![Documentation Status](https://img.shields.io/readthedocs/camp_short-read-quality-control)](https://camp-documentation.readthedocs.io/en/latest/shortreadqc/index.html) ![Version](https://img.shields.io/badge/version-0.9.6-brightgreen)
+[![Documentation Status](https://img.shields.io/readthedocs/camp_short-read-quality-control)](https://camp-documentation.readthedocs.io/en/latest/shortreadqc/index.html) ![Version](https://img.shields.io/badge/version-0.10.0-brightgreen)
 
 ## Overview
 
@@ -10,9 +10,9 @@ There are two filtration steps in the module- i) for general poor quality (Phred
 
 ## Installation
 
-1. Clone repo from [Github](<https://github.com/MetaSUB-CAMP/camp_short-read-quality-control>).
+1. Clone repo from [Github](<https://github.com/Meta-CAMP/camp_short-read-quality-control>).
 ```Bash
-git clone https://github.com/MetaSUB-CAMP/camp_short-read-quality-control
+git clone https://github.com/Meta-CAMP/camp_short-read-quality-control
 ```
 
 2. Set up the conda environment using `configs/conda/short-read-quality-control.yaml`. 
