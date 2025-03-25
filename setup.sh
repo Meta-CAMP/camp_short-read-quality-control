@@ -187,3 +187,5 @@ error_correction: 'tadpole'
 qc_dataviz: True" > "$PARAMS_FILE"
 
 echo "✅ parameters.yaml file created successfully in test_data/"
+
+echo "🎯 Setup complete! You can now test the workflow using \`python workflow/mag_qc.py test\`"
