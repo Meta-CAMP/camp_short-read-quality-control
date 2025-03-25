@@ -162,11 +162,6 @@ def test():
     # env_yamls = join(main_dir, 'configs', 'conda')
     env_yamls = join(main_dir, 'configs', 'conda')
     env_dir = get_conda_prefix(pyaml)
-    print(f"env_dir retrieved from parameters.yaml: {env_dir}")
-    if exists(join(env_dir, "bbmap")):
-        print("bbmap found")
-    else:
-        print("bbmap not found")
     # Run workflow
     cmd_line(workflow, work_dir, samples, env_yamls, pyaml, ryaml,   \
              10, env_dir, False, False)
