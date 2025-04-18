@@ -36,7 +36,7 @@ conda activate short-read-quality-control
 This step also automatically updates `configs/parameters.yaml` and `test_data/parameters.yaml`, which are needed in running the module and the test respectively. 
 
 ```Bash
-source bash.sh
+source setup.sh
 ```
 Alternatively, one can choose to manually download and index reference genomes and update the `host_reference_databas` section in the respective `parameters.yaml`. 
 For instance, the human reference genome (GRCh38) can be downloaded and indexed as follows:
