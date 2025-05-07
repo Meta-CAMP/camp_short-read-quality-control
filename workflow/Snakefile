@@ -83,6 +83,7 @@ rule filter_low_qual:
         rev = join(dirs.OUT, '0_lowqual_removal', '{sample}_2.fastq.gz'),
     log:
         join(dirs.LOG, 'lowqual_removal', '{sample}.out'),
+    conda: "fastp"
     threads: config['filter_lowqual_threads'],
     resources:
         mem_mb = config['filter_lowqual_mem_mb'],
@@ -110,6 +111,8 @@ rule filter_adapters:
     output:
         fwd  = join(dirs.OUT, '1_adapter_removal', '{sample}_1.fastq.gz'),
         rev  = join(dirs.OUT, '1_adapter_removal', '{sample}_2.fastq.gz'),
+    conda:
+        "adapterremoval"
     threads: config['filter_adapters_threads'],
     params:
         adapt_lst = '--adapter-list ' + str(config['adapters']),
@@ -162,6 +165,7 @@ rule filter_seq_errors_bh:
         rev = join(dirs.OUT, '3_error_removal', 'bayeshammer', '{sample}', 'corrected', '{sample}_2.fastq.00.0_0.cor.fastq.gz'),
     log:
         join(dirs.LOG, 'error_removal', '{sample}.out')
+    conda: "spades"
     threads: config['filter_seq_errors_threads'],
     resources:
         mem_mb = config['filter_seq_errors_mem_mb'],
@@ -228,7 +232,7 @@ rule fastqc_pre:
         join(dirs.TMP,'{sample}_{dir}.fastq.gz'),
     output:
         join(dirs.OUT, '4_summary', 'fastqc_pre', '{sample}_{dir}_fastqc.html'),
-    conda: "multiqc"
+    conda: "fastqc"
         #join(config['env_yamls'], 'multiqc.yaml'),	
     threads: config['qc_threads'],
     params:
@@ -246,7 +250,7 @@ rule fastqc_post:
         workflow_mode_err,
     output:
         join(dirs.OUT, '4_summary', 'fastqc_post', '{sample}_{dir}_fastqc.html'),
-    conda: "multiqc"
+    conda: "fastqc"
     threads: config['qc_threads'],
     params:
         out_dir = join(dirs.OUT, '4_summary', 'fastqc_post'),

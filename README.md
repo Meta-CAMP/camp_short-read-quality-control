@@ -1,6 +1,6 @@
 # Short-Read Quality Control
 
-[![Documentation Status](https://img.shields.io/readthedocs/camp_short-read-quality-control)](https://camp-documentation.readthedocs.io/en/latest/shortreadqc/index.html) ![Version](https://img.shields.io/badge/version-0.10.0-brightgreen)
+[![Documentation Status](https://img.shields.io/readthedocs/camp_short-read-quality-control)](https://camp-documentation.readthedocs.io/en/latest/shortreadqc/index.html) ![Version](https://img.shields.io/badge/version-0.11.0-brightgreen)
 
 ## Overview
 
@@ -10,35 +10,40 @@ There are two filtration steps in the module- i) for general poor quality (Phred
 
 ## Installation
 
+### Install `conda`
+
+If you don't already have `conda` handy, we recommend installing `miniforge`, which is a minimal conda installer that, by default, installs packages from open-source community-driven channels such as `conda-forge`.
+```Bash
+# If you don't already have conda on your system...
+wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+```
+
+Run the following command to initialize Conda for your shell. This will configure your shell to recognize conda activate. 
+```Bash
+conda init
+```
+
+Restart your terminal or run:
+```Bash
+source ~/.bashrc  # For bash users
+source ~/.zshrc   # For zsh users
+```
+### Setting up the Short-Read QC Module
+
 1. Clone repo from [Github](<https://github.com/Meta-CAMP/camp_short-read-quality-control>).
 ```Bash
 git clone https://github.com/Meta-CAMP/camp_short-read-quality-control
 ```
 
-2. Set up the conda environment using `configs/conda/short-read-quality-control.yaml`. 
-
-If you don't already have `conda` handy, we recommend installing `miniforge`, which is a minimal conda installer that, by default, installs packages from open-source community-driven channels such as `conda-forge`.
-```Bash
-# If you don't already have conda on your system...
-# wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
-
-# Create and activate conda environment 
-cd camp_short-read-quality-control
-conda env create -f configs/conda/short-read-quality-control.yaml
-conda activate short-read-quality-control
-```
-
-> [!TIP]
-> All databases used in CAMP modules will also be available for download on Zenodo (link TBD).
-
-3. Automated setup by downloading and indexing host reference genome(s). In the `setup.sh` script, indexing is done using 20 threads. The user can modify this parameter based on the capacity of their machine.
+2. Automated setup by downloading and indexing host reference genome(s). In the `setup.sh` script, indexing is done using 20 threads. The user can modify this parameter based on the capacity of their machine.
 
 This step also automatically updates `configs/parameters.yaml` and `test_data/parameters.yaml`, which are needed in running the module and the test respectively. 
-
 ```Bash
+cd camp_short-read-quality-control
 source setup.sh
 ```
-Alternatively, one can choose to manually download and index reference genomes and update the `host_reference_databas` section in the respective `parameters.yaml`. 
+
+Alternatively, one can choose to manually download and index reference genomes and update the `host_reference_database` section in the respective `parameters.yaml`. 
 For instance, the human reference genome (GRCh38) can be downloaded and indexed as follows:
 ```Bash
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/GCA_000001405.15_GRCh38_genomic.fna.gz
@@ -49,6 +54,7 @@ As of now, `setup.sh` provides two download options: human and mouse.
 4. Make sure the installed pipeline works correctly. With 40 threads and a maximum of 150 GB allocated for a command (`tadpole`), the test dataset should finish in approximately 6 minutes.
 ```Bash
 # Run tests on the included sample dataset
+conda activate camp
 python camp_short-read-quality-control/workflow/short-read-quality-control.py test
 ```
 
@@ -96,6 +102,7 @@ To run CAMP on the command line, use the following, where `/path/to/work/dir` is
     - Relative or absolute paths to the Snakefile and/or the working directory (if you're running elsewhere) are accepted!
     - The parameters and resource config YAMLs can also be customized.
 ```Bash
+conda activate camp
 python /path/to/camp_short-read-quality-control/workflow/short-read-quality-control.py \
     (-c number_of_cores_allocated) \
     (-p /path/to/parameters.yaml) \
@@ -110,6 +117,7 @@ To run CAMP on a job submission cluster (for now, only Slurm is supported), use 
     - `--slurm` is an optional flag that submits all rules in the Snakemake pipeline as `sbatch` jobs. 
     - In Slurm mode, the `-c` flag refers to the maximum number of `sbatch` jobs submitted in parallel, **not** the pool of cores available to run the jobs. Each job will request the number of cores specified by threads in `configs/resources/slurm.yaml`.
 ```Bash
+conda activate camp
 sbatch -J jobname -o jobname.log << "EOF"
 #!/bin/bash
 python /path/to/camp_short-read-quality-control/workflow/short-read-quality-control.py --slurm \
@@ -128,10 +136,8 @@ EOF
     - I recommend creating a new directory, which I've called `/path/to/work/dir/short_read_qc/5_retrimming` and placing reprocessed reads inside them. 
     - Afterwards, I reran FastQC and MultiQC and collated summary statistics (ex. numbers of reads, etc.) from the reprocessed datasets manually. I also updated the location of the reprocessed reads in `/path/to/work/dir/short_read_qc/final_reports/samples.csv` to `/path/to/work/dir/short_read_qc/5_retrimming`.
 
-2. To plot grouped bar graph(s) of the number of reads and bases remaining after each quality control step in each sample, set up the dataviz environment and follow the instructions in the Jupyter notebook:
+2. To plot grouped bar graph(s) of the number of reads and bases remaining after each quality control step in each sample, and follow the instructions in the Jupyter notebook:
 ```Bash
-conda env create -f configs/conda/dataviz.yaml
-conda activate dataviz
 jupyter notebook &
 ```
 
