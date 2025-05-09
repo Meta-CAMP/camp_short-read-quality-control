@@ -51,6 +51,7 @@ find_install_conda_env() {
         echo "🚀 Installing $1 in $DEFAULT_CONDA_ENV_DIR/$1..."
         conda create --prefix $DEFAULT_CONDA_ENV_DIR/$1 -c conda-forge -c bioconda $1
         echo "✅ $1 installed successfully!"
+    fi
 }
 
 # Ask user if each database is already installed or needs to be installed
