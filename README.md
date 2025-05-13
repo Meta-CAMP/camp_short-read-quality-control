@@ -1,6 +1,8 @@
 # Short-Read Quality Control
 
-[![Documentation Status](https://img.shields.io/readthedocs/camp_short-read-quality-control)](https://camp-documentation.readthedocs.io/en/latest/shortreadqc/index.html) ![Version](https://img.shields.io/badge/version-0.11.0-brightgreen)
+![Version](https://img.shields.io/badge/version-0.12.0-brightgreen)
+
+<!-- [![Documentation Status](https://img.shields.io/readthedocs/camp_short-read-quality-control)](https://camp-documentation.readthedocs.io/en/latest/shortreadqc/index.html) -->
 
 ## Overview
 
@@ -39,7 +41,7 @@ git clone https://github.com/Meta-CAMP/camp_short-read-quality-control
 
 This step also automatically updates `configs/parameters.yaml` and `test_data/parameters.yaml`, which are needed in running the module and the test respectively. 
 ```Bash
-cd camp_short-read-quality-control
+cd camp_short-read-quality-control/
 source setup.sh
 ```
 
