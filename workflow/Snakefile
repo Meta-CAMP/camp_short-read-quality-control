@@ -145,10 +145,10 @@ rule filter_host_reads:
         mem_mb = config['filter_host_reads_mem_mb'],
     params:
         prefix = join(dirs.OUT, '2_host_removal', '{sample}'),
-        host_ref_db = config['host_reference_database'],
+        host_ref = config['host_ref_genome'],
     shell:
         """
-        bowtie2 --very-sensitive --threads {threads} -x {params.host_ref_db} \
+        bowtie2 --very-sensitive --threads {threads} -x {params.host_ref} \
             --un-conc-gz {params.prefix}_%.fastq.gz \
             -1 {input.fwd} -2 {input.rev} > {params.prefix}.sam 2> {log}
         rm {params.prefix}.sam
