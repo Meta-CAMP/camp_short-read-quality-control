@@ -1,6 +1,6 @@
 # Short-Read Quality Control
 
-![Version](https://img.shields.io/badge/version-0.12.0-brightgreen)
+![Version](https://img.shields.io/badge/version-0.13.0-brightgreen)
 
 <!-- [![Documentation Status](https://img.shields.io/readthedocs/camp_short-read-quality-control)](https://camp-documentation.readthedocs.io/en/latest/shortreadqc/index.html) -->
 
@@ -53,7 +53,7 @@ bowtie2-build --threads 20 GCA_000001405.15_GRCh38_genomic.fna.gz GCA_000001405.
 ```
 As of now, `setup.sh` provides two download options: human and mouse.
 
-4. Make sure the installed pipeline works correctly. With 40 threads and a maximum of 150 GB allocated for a command (`tadpole`), the test dataset should finish in approximately 6 minutes.
+4. Make sure the installed pipeline works correctly. With 10 threads and a maximum of 40 GB allocated for a command (`tadpole`), the test dataset should finish in approximately 3 minutes.
 ```Bash
 # Run tests on the included sample dataset
 conda activate camp

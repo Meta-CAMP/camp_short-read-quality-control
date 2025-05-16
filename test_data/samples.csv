@@ -1,2 +1,3 @@
 sample_name,illumina_fwd,illumina_rev
-uhgg,test_data/uhgg_1.fastq.gz,test_data/uhgg_2.fastq.gz
+uhgg,/path/to/camp_short-read-quality-control/test_data/uhgg_1.fastq.gz,/path/to/camp_short-read-quality-control/test_data/uhgg_2.fastq.gz
+

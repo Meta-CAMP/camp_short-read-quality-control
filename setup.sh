@@ -76,11 +76,6 @@ ask_database() {
                         echo "⚠️ The provided path does not exist or is empty. Please check and try again."
                         read -p "Do you want to re-enter the path (r) or install $DB_NAME instead (i)? (r/i): " RETRY
                         if [[ "$RETRY" == "i" ]]; then
-                            break  # Exit inner loop to start installation
-                        fi
-                    fi
-                done
-                        if [[ "$RETRY" == "i" ]]; then
                             break  # Exit outer loop to start installation
                         fi
                     fi
@@ -177,7 +172,7 @@ download_and_index() {
     conda activate camp
     echo "Building Bowtie2 index in $GENOME_DIR..."
     bowtie2-build "$GENOME_DIR/$FILE_NAME" "$GENOME_DIR/hg38_index" || { echo "❌ Failed to build index for $GENOME_NAME."; return; }
-    conda deactivate camp
+    conda deactivate
     
     echo "✅ $GENOME_NAME genome downloaded and indexed successfully in $GENOME_DIR!"
 
@@ -351,4 +346,4 @@ EOL
 
 echo "✅ Test data input CSV created at: $INPUT_CSV"
 
-echo "🎯 Setup complete! You can now test the workflow using \`python workflow/mag_qc.py test\`"
+echo "🎯 Setup complete! You can now test the workflow using \`python workflow/short-read-quality-control.py test\`"

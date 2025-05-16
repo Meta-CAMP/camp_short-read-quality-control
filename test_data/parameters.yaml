@@ -1,5 +1,7 @@
 #'''Parameters'''#
 
+ext: ''
+conda_prefix: ''
 
 # --- general --- #
 
@@ -13,14 +15,13 @@ dedup:      False
 
 # --- filter_adapters --- #
 
-# '/path/to/camp_short-read-quality-control/workflow/ext/common_adapters.txt'
-adapters: '/home/lam4003/bin/camp_short-read-quality-control/workflow/ext/common_adapters.txt'
+adapters: ''
 
 
 # --- filter_host_reads --- #
 
-use_host_filter:         True
-host_reference_database: '/workdir/lam4003/Databases/GRCh38_28122022/GCA_000001405.15_GRCh38_genomic'
+use_host_filter:         'True'
+host_ref_genome:         ''
 
 
 # --- filter_seq_errors --- #
