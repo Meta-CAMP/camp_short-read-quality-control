@@ -80,11 +80,7 @@ ask_database() {
                         fi
                     fi
                 done
-                        if [[ "$RETRY" == "i" ]]; then
-                            break  # Exit outer loop to start installation
-                        fi
-                    fi
-                done
+		break  # Exit outer loop to start installation
                 ;;
             [Nn]* )
                 break # Exit outer loop to start installation
@@ -248,7 +244,7 @@ esac
 
 # Generate parameters.yaml
 SCRIPT_DIR=$(pwd)
-EXT_PATH="$SR_QC_WORK_DIR/workflow/ext"
+EXT_PATH="$DEFAULT_PATH/workflow/ext"
 
 PARAMS_FILE="$MODULE_WORK_DIR/test_data/parameters.yaml"
 # Remove existing parameters.yaml if present
@@ -351,4 +347,4 @@ EOL
 
 echo "✅ Test data input CSV created at: $INPUT_CSV"
 
-echo "🎯 Setup complete! You can now test the workflow using \`python workflow/mag_qc.py test\`"
+echo "🎯 Setup complete! You can now test the workflow using \`python workflow/short-read-quality-control.py test\`"
