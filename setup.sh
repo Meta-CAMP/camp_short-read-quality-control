@@ -80,7 +80,6 @@ ask_database() {
                         fi
                     fi
                 done
-		break  # Exit outer loop to start installation
                 ;;
             [Nn]* )
                 break # Exit outer loop to start installation
@@ -173,7 +172,7 @@ download_and_index() {
     conda activate camp
     echo "Building Bowtie2 index in $GENOME_DIR..."
     bowtie2-build "$GENOME_DIR/$FILE_NAME" "$GENOME_DIR/hg38_index" || { echo "❌ Failed to build index for $GENOME_NAME."; return; }
-    conda deactivate camp
+    conda deactivate
     
     echo "✅ $GENOME_NAME genome downloaded and indexed successfully in $GENOME_DIR!"
 
