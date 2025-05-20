@@ -59,37 +59,49 @@ ask_database() {
     local DB_NAME="$1"
     local DB_VAR_NAME="$2"
     local DB_PATH=""
-
-    echo "🛠️  Checking for $DB_NAME database..."
+    
+    echo "🛠️  Checking for $DB_NAME database index files..."
 
     while true; do
-        read -p "❓ Do you already have the $DB_NAME database installed? (y/n): " RESPONSE
-        case "$RESPONSE" in
-            [Yy]* )
-                while true; do
-                    read -p "📂 Enter the path to your existing $DB_NAME database (eg. /path/to/database_storage): " DB_PATH
-                    if [[ -d "$DB_PATH" || -f "$DB_PATH" ]]; then
-                        DATABASE_PATHS[$DB_VAR_NAME]="$DB_PATH"
-                        echo "✅ $DB_NAME path set to: $DB_PATH"
-                        return  # Exit the function immediately after successful input
-                    else
-                        echo "⚠️ The provided path does not exist or is empty. Please check and try again."
-                        read -p "Do you want to re-enter the path (r) or install $DB_NAME instead (i)? (r/i): " RETRY
-                        if [[ "$RETRY" == "i" ]]; then
-                            break  # Exit inner loop to start installation
-                        fi
-                    fi
-                done
-                ;;
-            [Nn]* )
-                break # Exit outer loop to start installation
-                ;; 
-            * ) echo "⚠️ Please enter 'y(es)' or 'n(o)'.";;
-        esac
+        read -p "📂 Enter the path to your existing $DB_NAME database directory (where the .bt2 files are located): " DB_PATH
+        if [[ -d "$DB_PATH" ]]; then
+            INDEX_PREFIX=$(auto_detect_bowtie_index "$DB_PATH")
+            if [[ -n "$INDEX_PREFIX" ]]; then
+                DATABASE_PATHS[$DB_VAR_NAME]="$INDEX_PREFIX"
+                echo "✅ $DB_NAME index prefix set to: $INDEX_PREFIX"
+                return 0
+            else
+                echo "⚠️ Could not detect a valid Bowtie2 index (.1.bt2) in $DB_PATH."
+            fi
+        else
+            echo "⚠️ The provided path is not a valid directory."
+        fi
+
+        read -p "Do you want to re-enter the path (r) or skip this setup (s)? (r/s): " RETRY
+        if [[ "$RETRY" == "s" ]]; then
+            DATABASE_PATHS[$DB_VAR_NAME]=""
+            return 1
+        fi
     done
-    read -p "📂 Enter the directory where you want to install $DB_NAME: " DB_PATH
-    install_database "$DB_NAME" "$DB_VAR_NAME" "$DB_PATH"
 }
+
+
+auto_detect_bowtie_index() {
+    local DB_PATH="$1"
+    local BT2_FILE
+    local INDEX_PREFIX
+
+    BT2_FILE=$(find "$DB_PATH" -maxdepth 1 -name "*.1.bt2" | head -n 1)
+
+    if [[ -f "$BT2_FILE" ]]; then
+        INDEX_PREFIX="${BT2_FILE%.1.bt2}"
+        echo "$INDEX_PREFIX"  # ONLY echo this
+    else
+        echo "❌ No valid .1.bt2 index file found in $DB_PATH" >&2
+        return 1
+    fi
+}
+
 
 # Install databases in the specified directory
 install_database() {
@@ -181,63 +193,74 @@ download_and_index() {
 }
 
 # Ask user for selection
-while true; do
-    echo "Select the reference genome to download and index:"
-    echo "1) Human (hg38)"
-    echo "2) Mouse (GRCm39)"
-    echo "3) Skip"
+read -p "❓ Do you already have the host genome Bowtie2 index files? (y/n): " HAS_INDEX
 
-    read -p "Enter your choice (1/2/3): " choice
+if [[ "$HAS_INDEX" =~ ^[Yy]$ ]]; then
+    ask_database "Host Genome" "HOST_DB"
+    HOST_REFERENCE_PATH="${DATABASE_PATHS[HOST_DB]}"
+    HOST_FILTER='True'
+else
+    while true; do
+        echo "Select the reference genome to download and index:"
+        echo "1) Human (hg38)"
+        echo "2) Mouse (GRCm39)"
+        echo "3) Skip"
 
+        read -p "Enter your choice (1/2/3): " choice
+
+        case $choice in
+            1)
+                read -p "Enter the directory where the genome should be installed: " INSTALL_DIR
+                DB_PATH="$INSTALL_DIR/hg38_ref"
+                mkdir -p "$DB_PATH"
+                HOST_FILTER='True'
+                HOST_REFERENCE_PATH="$DB_PATH/hg38_index"
+                break
+                ;;
+            2)
+                read -p "Enter the directory where the genome should be installed: " INSTALL_DIR
+                DB_PATH="$INSTALL_DIR/GRCm39"
+                mkdir -p "$DB_PATH"
+                HOST_FILTER='True'
+                HOST_REFERENCE_PATH="$DB_PATH/mouse_index"
+                break
+                ;;
+            3)
+                echo "Skipping download and indexing."
+                read -p "Would you like to provide an alternative path for the database? (y/n): " alt_choice
+                if [[ "$alt_choice" == "y" || "$alt_choice" == "Y" ]]; then
+                    read -p "Enter the alternative database path (prefix to .bt2 files): " HOST_REFERENCE_PATH
+                    HOST_FILTER='True'
+                else
+                    HOST_REFERENCE_PATH=""
+                    HOST_FILTER='False'
+                fi
+                break
+                ;;
+            *)
+                echo "⚠️ Invalid choice! Please enter 1, 2, or 3."
+                ;;
+        esac
+    done
+
+    # 🔄 Run the downloader for hg38 or mouse
     case $choice in
         1)
-            read -p "Enter the directory where the genome should be installed: " INSTALL_DIR
-            DB_PATH="$INSTALL_DIR/hg38_ref"
-            mkdir -p $DB_PATH
-            HOST_FILTER='True'
-	        break
+            download_and_index "Human (hg38)" \
+                "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz" \
+                "hg38.fa" \
+                "hg38_index" \
+                "$DB_PATH"
             ;;
         2)
-            read -p "Enter the directory where the genome should be installed: " INSTALL_DIR
-            DB_PATH="$INSTALL_DIR/GRCm39"
-            mkdir -p $DB_PATH
-            HOST_FILTER='True'
-            break
-                ;;
-        3)
-            echo "Skipping download and indexing."
-            read -p "Would you like to provide an alternative path for the database? (y/n): " alt_choice
-            if [[ "$alt_choice" == "y" || "$alt_choice" == "Y" ]]; then
-                read -p "Enter the alternative database path: " HOST_REFERENCE_PATH
-                HOST_FILTER='True'
-            else
-                HOST_REFERENCE_PATH=""
-                HOST_FILTER='False'
-            fi
-            break
-            ;;
-        *)
-            echo "⚠️ Invalid choice! Please enter 1, 2, or 3."
+            download_and_index "Mouse (GRCm39)" \
+                "http://ftp.ensembl.org/pub/release-108/fasta/mus_musculus/dna/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz" \
+                "GRCm39.fa" \
+                "mouse_index" \
+                "$DB_PATH"
             ;;
     esac
-done
-
-case $choice in
-    1)
-        download_and_index "Human (hg38)" \
-            "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz" \
-            "hg38.fa" \
-            "hg38_index" \
-            "$DB_PATH"
-        ;;
-    2)
-        download_and_index "Mouse (GRCm39)" \
-            "http://ftp.ensembl.org/pub/release-108/fasta/mus_musculus/dna/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz" \
-            "GRCm39.fa" \
-            "mouse_index" \
-            "$DB_PATH"
-        ;;
-esac
+fi
 
 # --- Generate parameter configs ---
 
