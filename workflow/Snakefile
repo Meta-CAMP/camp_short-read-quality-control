@@ -90,12 +90,14 @@ rule filter_low_qual:
     params:
         minqual = config['minqual'],
         dedup = '--dedup' if config['dedup'] else '--dont_eval_duplication',
+        poly_g_flag = ('-g' if config.get('force_poly_g', False) else ''),
         sample = '{sample}',
         out_dir = join(dirs.OUT, '0_lowqual_removal'),
     shell:
         """
         fastp -i {input.fwd} -I {input.rev} -o {output.fwd} -O {output.rev} \
             -q {params.minqual} {params.dedup} --thread {threads} \
+            {params.poly_g_flag} \
             -j {params.out_dir}/{params.sample}.json \
             -h {params.out_dir}/{params.sample}.html > {log} 2>&1
         """
@@ -336,7 +338,7 @@ rule make_config:
     output:
         join(dirs.OUT, 'final_reports', 'samples.csv'),
     params: 
-        fastq_dir = join(dirs.OUT, '3_error_removal'),
+        fastq_dir = join(dirs.OUT, '3_error_removal', 'bayeshammer' if config.get('error_correction', 'tadpole') == 'bayeshammer' else 'tadpole'),
         samples = SAMPLES,
         pre = join(dirs.OUT, 'final_reports', 'pre_multiqc_report.html'),
         post = join(dirs.OUT, 'final_reports', 'post_multiqc_report.html'),
