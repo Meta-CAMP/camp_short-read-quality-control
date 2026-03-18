@@ -11,7 +11,7 @@ minqual:    30
 # --- filter_low_qual --- #
 
 dedup:      False
-
+force_poly_g: True
 
 # --- filter_adapters --- #
 
