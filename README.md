@@ -1,5 +1,5 @@
 
-![Version](https://img.shields.io/badge/version-0.13.0-brightgreen)
+![Version](https://img.shields.io/badge/version-0.14.0-brightgreen)
 
 <!-- [![Documentation Status](https://img.shields.io/readthedocs/camp_short-read-quality-control)](https://camp-documentation.readthedocs.io/en/latest/shortreadqc/index.html) -->
 

@@ -8,7 +8,7 @@ from io import StringIO
 from os import getcwd, makedirs
 from os.path import abspath, dirname, exists, join
 import pandas as pd
-from snakemake import snakemake, main
+import subprocess
 from shutil import rmtree
 from utils import Workflow_Dirs, print_cmds, cleanup_files, get_conda_prefix
 
@@ -22,10 +22,11 @@ def sbatch(workflow, work_dir, samples, env_yamls, pyaml, ryaml, cores, env_dir,
     cfg_wd = 'work_dir=%s' % work_dir
     cfg_sp = 'samples=%s' % samples
     cfg_ey = 'env_yamls=%s' % env_yamls
-    main([
-        '--snakefile',      workflow, 
-        '--config',         *{cfg_wd, cfg_sp, cfg_ey},
-        '--configfiles',    *[pyaml, ryaml],
+    subprocess.run([
+        'snakemake',
+        '--snakefile',      workflow,
+        '--config',         cfg_wd, cfg_sp, cfg_ey,
+        '--configfiles',    pyaml, ryaml,
         '--jobs',           str(cores),
         '--restart-times',  '2',
         '--use-conda',
@@ -35,32 +36,28 @@ def sbatch(workflow, work_dir, samples, env_yamls, pyaml, ryaml, cores, env_dir,
         '--keep-going',
         '--latency-wait',   '60',
         '--profile',        s_dir
-    ])
+    ], check=True)
 
 
 def cmd_line(workflow, work_dir, samples, env_yamls, pyaml, ryaml, cores, env_dir, dry_run, unlock):
-    snakemake(
-        workflow,
-        config = {
-            'work_dir': work_dir,
-            'samples': samples,
-            'env_yamls': env_yamls
-        },
-        configfiles = [
-            pyaml,
-            ryaml
-        ],
-        cores = cores,
-        restart_times = 2,
-        use_conda = True,
-        conda_prefix = env_dir,
-        printshellcmds = True,
-        keepgoing = True,
-        latency_wait = 60,
-        # generate_unit_tests = unit_test_dir,
-        dryrun = dry_run,
-        unlock = unlock
-    )
+    cmd = [
+        'snakemake',
+        '--snakefile',      workflow,
+        '--config',         'work_dir=%s' % work_dir, 'samples=%s' % samples, 'env_yamls=%s' % env_yamls,
+        '--configfiles',    pyaml, ryaml,
+        '--cores',          str(cores),
+        '--restart-times',  '2',
+        '--use-conda',
+        '--conda-prefix',   env_dir,
+        '--printshellcmds',
+        '--keep-going',
+        '--latency-wait',   '60',
+    ]
+    if dry_run:
+        cmd.append('--dryrun')
+    if unlock:
+        cmd.append('--unlock')
+    subprocess.run(cmd, check=True)
 
 
 @cli.command('run')

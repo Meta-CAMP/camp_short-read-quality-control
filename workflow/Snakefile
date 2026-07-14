@@ -241,7 +241,7 @@ rule fastqc_pre:
         out_dir = join(dirs.OUT, '4_summary', 'fastqc_pre'),
     shell:
         """
-        fastqc {input} --outdir {params.out_dir} -t {threads}
+        fastqc {input} --odir {params.out_dir} -t {threads}
         """
 
 
@@ -258,7 +258,7 @@ rule fastqc_post:
         out_dir = join(dirs.OUT, '4_summary', 'fastqc_post'),
     shell:
         """
-        fastqc {input} --outdir {params.out_dir} -t {threads}
+        fastqc {input} --dir {params.out_dir} -t {threads}
         """
 
 

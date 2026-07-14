@@ -183,6 +183,7 @@ download_and_index() {
 
     conda activate camp
     echo "Building Bowtie2 index in $GENOME_DIR..."
+    conda activate "$DEFAULT_CONDA_ENV_DIR/camp" 
     bowtie2-build "$GENOME_DIR/$FILE_NAME" "$GENOME_DIR/hg38_index" || { echo "❌ Failed to build index for $GENOME_NAME."; return; }
     conda deactivate
     
